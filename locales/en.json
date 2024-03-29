@@ -1,0 +1,14 @@
+{
+    "change-language": "Change Language",
+    "start": "Get Started",
+
+    "welcome": "Welcome to SymptoCare!",
+    "Select": "Select a Patient",
+    "choose-text": "Choose the patient you suspect may have health concerns.",
+    "quote": "Your companion in tracking and improving your health",
+    "languageName": {
+      "en": "English",
+      "ar": "Arabic"
+    }
+  }
+  
