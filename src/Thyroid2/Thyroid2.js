@@ -50,7 +50,7 @@ const [ TBGmeasured    , setTBGmeasured ] = useState(0);
             value={TSH}
             onChangeText={setTSH}
             keyboardType="numeric"
-            placeholder="Enter Age"
+            placeholder="Enter TSH"
             placeholderTextColor="#999"
           />
         </View>
