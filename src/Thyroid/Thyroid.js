@@ -8,95 +8,167 @@ const Thyroid = () => {
 
   // Define state variables to store user-selected data
   const [formData, setFormData] = useState({
-    age: '',
-    genderFemale: 0, // Changed from 'sex' to 'genderFemale' with value 0 for male and 1 for female
-    genderMale: 0, // Added state for male gender
-    onThyroxine: 0,
-    queryOnThyroxine: 0,
-    onAntithyroidMedication: 0,
-    sick: 0,
-    pregnant: 0,
-    thyroidSurgery: 0,
-    I131Treatmenty: 0,
-    queryHypothyroid: 0,
-    queryHyperthyroid: 0,
+    age: 0,
+    gender: 0, // 0: female / 1: male
+    TSH: 0,
+    T3: 0,
+    TT4: 0,
+   FTI: 0,
+   T4U: 0,
+   Query_hypothyroid: 0,
+   thyriod_sugery: 0,
+   referral: 0,
+   onThyroxine :0,
+   Query_hyperthyroid:0,
+   sick :0,
+   FTI_measure:0,
+   source_SVHD:0,
+
+
   });
 
-  const onNextPressed = () => {
-    // Prepare the data to be sent
-    const dataToSend = {
-      age: formData.age,
-      genderFemale: formData.genderFemale, // Changed from 'sex' to 'genderFemale'
-      genderMale: formData.genderMale, // Added for male gender      onThyroxine: formData.onThyroxine,
-      queryOnThyroxine: formData.queryOnThyroxine,
-      onAntithyroidMedication: formData.onAntithyroidMedication,
-      sick: formData.sick,
-      pregnant: formData.pregnant,
-      thyroidSurgery: formData.thyroidSurgery,
-      I131Treatmenty: formData.I131Treatmenty,
-      queryHypothyroid: formData.queryHypothyroid,
-      queryHyperthyroid: formData.queryHyperthyroid,
+   // Define state variables to store prediction and probability
+   const [prediction, setPrediction] = useState('');
+   const [probability, setProbability] = useState('');
 
+   const [predictionMessage, setPredictionMessage] = useState('');
+
+   const onNextPressed = () => {
+
+      // Read the values from formData state
+      const dataArray = [
+        formData.age,
+        formData.gender,
+        formData.TSH,
+        formData.T3,
+        formData.TT4,
+        formData.FTI,
+        formData.T4U,
+        formData.Query_hypothyroid,
+        formData.thyriod_sugery,
+        formData.referral,
+        formData.onThyroxine,
+        formData.Query_hyperthyroid,
+        formData.sick,
+        formData.FTI_measure,
+        formData.source_SVHD,
+      ];
+    
+      //console.log('Data Array2:', dataArray); // Log the data array
 
       
-    };
-    navigation.navigate('Thyroid2');
+    // Manually create the array of data based on the provided data 
+    // thyroid model:
+    //const dataArray = [41, 0, 8.4, 1.5, 123, 129, 0.96, 0, 0, 1, 1, 0, 0, 1, 0];
+    
+    /*
+    // rf model:
+    [
+      28.0,    // age
+      0.0,     // sex
+      0,       // onThyroxine
+      0,       // queryOnThyroxine
+      0,       // onAntithyroidMedication
+      0,       // sick
+      0,       //FTI
+      0,       // thyroidSurgery
+      1,       // I131Treatment
+      0,       // queryHypothyroid
+      0,       // queryHyperthyroid
+      0,       // lithium
+      0,       // goitre
+      0,       // tumor
+      0,       // hypopituitary
+      0,       // psych
+      1,       // TSHMeasured
+      3.2,     // TSH
+      1,       // T3Measured
+      1.3,     // T3
+      1,       // TT4Measured
+      96.0,    // TT4
+      1,       // T4UMeasured
+      0.9,     // T4U
+      1,       // FTIMeasured
+      107.0,   // FTI
+      0,       // TBGMeasured
+      0,       // referralSource_SVHC
+      0,       // referralSource_SVHD
+      0,       // referralSource_SVI
+      1        // referralSource_other
+    ];
+    */
 
 
-  //   const apiUrl = 'https://example.com/api/endpoint'; 
+    
+    console.log('Data Array2:', dataArray); // Log the data array
 
-  //   fetch(apiUrl, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-       
-  //     },
-  //     body: JSON.stringify(dataToSend),
-  //   })
-  //   .then(response => {
-  //     if (!response.ok) {
-  //       throw new Error('Network response was not ok');
-  //     }
-  //     return response.json();
-  //   })
-  //   .then(responseData => {
-  //     console.log('API Response:', responseData);
-  //     navigation.navigate('Thyroid2');
-  //   })
-  //   .catch(error => {
-  //     console.error('Error:', error);
-  //   });
+    const apiUrl = 'http://10.0.2.2:8000/predict/thyroid';
+  
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data: dataArray }),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(responseData => {
+        if (responseData.prediction !== undefined) {
+          const predictionValue = responseData.prediction;
+          let predictionMessage = '';
+          if (predictionValue === 1) {
+            predictionMessage = 'The patient has the disease.';
+          } else {
+            predictionMessage = 'The patient is free of disease.';
+          }
+          // Set prediction message and probability to state
+          setPredictionMessage(predictionMessage);
+          setProbability((responseData.probability * 100).toFixed(2) + '%');
+          console.log('Prediction:', predictionMessage);
+          console.log('Probability:', responseData.probability);
+        } else {
+          console.warn('No prediction provided in the response');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error.message);
+      });
+    
+};
 
-    console.log("Form Data:", formData);
-   };
-
+  
+  
   // Function to update form data based on input
-  const updateFormData = (key, value) => {
-    setFormData({
-      ...formData,
-      [key]: value,
-    });
+  const updateFormData = (field, value) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [field]: value
+    }));
   };
+  
+
   const handleGenderSelection = (gender) => {
     setFormData(prevState => {
       if (gender === 'female') {
         return {
           ...prevState,
-          genderFemale: 1,
-          genderMale: 0,
+          gender: 0,
         };
       } else if (gender === 'male') {
         return {
           ...prevState,
-          genderFemale: 0,
-          genderMale: 1,
+          gender: 1,
         };
       }
       return prevState; // No change if gender is neither female nor male
     });
   };
-  
-  
+
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.container}>
@@ -110,7 +182,7 @@ const Thyroid = () => {
           <TextInput
             style={styles.input}
             value={formData.age}
-            onChangeText={(text) => updateFormData('age', text)}
+            onChangeText={(text) => updateFormData('age', parseInt(text))}
             keyboardType="numeric"
             placeholder="Enter Age"
             placeholderTextColor="#999"
@@ -118,27 +190,140 @@ const Thyroid = () => {
         </View>
        {/* Gender */}
        <View style={styles.inputRow}>
-  <Text style={styles.label}>Gender</Text>
-  <View style={styles.genderContainer}>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.genderFemale === 1 && styles.selectedGender]}
-      onPress={() => handleGenderSelection('female')}
-    >
-      <Text>Female</Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.genderMale === 1 && styles.selectedGender]}
-      onPress={() => handleGenderSelection('male')}
-    >
-      <Text>Male</Text>
-    </TouchableOpacity>
-  </View>
-</View>
+          <Text style={styles.label}>Gender</Text>
+          <View style={styles.genderContainer}>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.gender === 0 && styles.selectedGender]}
+              onPress={() => handleGenderSelection('female')}
+            >
+              <Text>Female</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.gender === 1 && styles.selectedGender]}
+              onPress={() => handleGenderSelection('male')}
+            >
+              <Text>Male</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-       {/* Additional features */}
-       {/* On Thyroxine */}
+
         <View style={styles.inputRow}>
-          <Text style={styles.label}>On Thyroxine</Text>
+          <Text style={styles.label}>TSH</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.TSH}
+            onChangeText={(text) => updateFormData('TSH', parseFloat(text))}
+            keyboardType="numeric"
+            placeholder="Enter TSH"
+            placeholderTextColor="#999"
+          />
+        </View>
+
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>T3</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.T3}
+            onChangeText={(text) => updateFormData('T3', parseFloat(text))}
+            keyboardType="decimal-pad"
+            placeholder="Enter T3"
+            placeholderTextColor="#999"
+          />
+        </View>
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>TT4</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.TT4}
+            onChangeText={(text) => updateFormData('TT4', parseFloat(text))}
+            keyboardType="decimal-pad"
+            placeholder="Enter TT4"
+            placeholderTextColor="#999"
+          />
+        </View>
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>FTI</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.FTI}
+            onChangeText={(text) => updateFormData('FTI', parseFloat(text))}
+            keyboardType="decimal-pad"
+            placeholder="Enter FTI"
+            placeholderTextColor="#999"
+          />
+        </View>
+     
+     
+        
+        <View style={styles.inputRow}>
+        <Text style={styles.label}>T4U</Text>
+        <TextInput
+          style={styles.input}
+          value={formData.T4U}
+          onChangeText={(text) => updateFormData('T4U', parseFloat(text))}
+          keyboardType="decimal-pad"
+          placeholder="Enter T4U"
+          placeholderTextColor="#999"
+        />
+      </View>
+
+     
+    
+
+{/* Query hypothyroid */}
+        <View style={styles.inputRow}>
+          <Text style={styles.label}> Query hypothyroid </Text>
+          <TouchableOpacity
+            style={[styles.genderOption, formData.Query_hypothyroid === 1 && styles.selectedGender]}
+            onPress={() => updateFormData('Query_hypothyroid', 1)}
+          >
+            <Text>1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.genderOption, formData.Query_hypothyroid === 0 && styles.selectedGender]}
+            onPress={() => updateFormData('Query_hypothyroid', 0)}
+          >
+            <Text>0</Text>
+          </TouchableOpacity>
+        </View>
+
+
+        {/*thyriod sugery*/}
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>thyriod sugery</Text>
+          <TouchableOpacity
+            style={[styles.genderOption, formData.thyriod_sugery=== 1 && styles.selectedGender]}
+            onPress={() => updateFormData('thyriod_sugery', 1)}
+          >
+            <Text>1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.genderOption, formData.thyriod_sugery=== 0 && styles.selectedGender]}
+            onPress={() => updateFormData('thyriod_sugery', 0)}
+          >
+            <Text>0</Text>
+          </TouchableOpacity>
+        </View>
+        {/* referral*/}
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>referral</Text>
+          <TouchableOpacity
+            style={[styles.genderOption, formData.referral === 1 && styles.selectedGender]}
+            onPress={() => updateFormData('referral', 1)}
+          >
+            <Text>1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.genderOption, formData.referral=== 0 && styles.selectedGender]}
+            onPress={() => updateFormData('referral', 0)}
+          >
+            <Text>0</Text>
+          </TouchableOpacity>
+        </View>
+        {/* onThyroxine */}
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>On Thyroxine </Text>
           <TouchableOpacity
             style={[styles.genderOption, formData.onThyroxine === 1 && styles.selectedGender]}
             onPress={() => updateFormData('onThyroxine', 1)}
@@ -152,41 +337,28 @@ const Thyroid = () => {
             <Text>0</Text>
           </TouchableOpacity>
         </View>
-        {/* Query on Thyroxine */}
+
+        {/* Query hyperthyroid */}
+
         <View style={styles.inputRow}>
-          <Text style={styles.label}>Query on Thyroxine</Text>
+          <Text style={styles.label}> Query hyperthyroid</Text>
           <TouchableOpacity
-            style={[styles.genderOption, formData.queryOnThyroxine === 1 && styles.selectedGender]}
-            onPress={() => updateFormData('queryOnThyroxine', 1)}
+            style={[styles.genderOption, formData.Query_hyperthyroid === 1 && styles.selectedGender]}
+            onPress={() => updateFormData('Query_hyperthyroid', 1)}
           >
             <Text>1</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.genderOption, formData.queryOnThyroxine === 0 && styles.selectedGender]}
-            onPress={() => updateFormData('queryOnThyroxine', 0)}
+            style={[styles.genderOption, formData.Query_hyperthyroid === 0 && styles.selectedGender]}
+            onPress={() => updateFormData('Query_hyperthyroid', 0)}
           >
             <Text>0</Text>
           </TouchableOpacity>
         </View>
-        {/* On Antithyroid Medication */}
+
+        {/* sick */}
         <View style={styles.inputRow}>
-          <Text style={styles.label}>On Antithyroid Medication</Text>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.onAntithyroidMedication === 1 && styles.selectedGender]}
-            onPress={() => updateFormData('onAntithyroidMedication', 1)}
-          >
-            <Text>1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.onAntithyroidMedication === 0 && styles.selectedGender]}
-            onPress={() => updateFormData('onAntithyroidMedication', 0)}
-          >
-            <Text>0</Text>
-          </TouchableOpacity>
-        </View>
-        {/* Sick */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Sick</Text>
+          <Text style={styles.label}> sick</Text>
           <TouchableOpacity
             style={[styles.genderOption, formData.sick === 1 && styles.selectedGender]}
             onPress={() => updateFormData('sick', 1)}
@@ -200,91 +372,58 @@ const Thyroid = () => {
             <Text>0</Text>
           </TouchableOpacity>
         </View>
-        {/* Pregnant */}
+
+        {/* FTI_measure */}
         <View style={styles.inputRow}>
-          <Text style={styles.label}>Pregnant</Text>
+          <Text style={styles.label}> FTI measure</Text>
           <TouchableOpacity
-            style={[styles.genderOption, formData.pregnant === 1 && styles.selectedGender]}
-            onPress={() => updateFormData('pregnant', 1)}
+            style={[styles.genderOption, formData.FTI_measure === 1 && styles.selectedGender]}
+            onPress={() => updateFormData('FTI_measure', 1)}
           >
             <Text>1</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.genderOption, formData.pregnant === 0 && styles.selectedGender]}
-            onPress={() => updateFormData('pregnant', 0)}
+            style={[styles.genderOption, formData.FTI_measure === 0 && styles.selectedGender]}
+            onPress={() => updateFormData('FTI_measure', 0)}
           >
             <Text>0</Text>
           </TouchableOpacity>
         </View>
-        {/* Thyroid Surgery */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Thyroid Surgery</Text>
+{/* source_SVHD */}
+<View style={styles.inputRow}>
+          <Text style={styles.label}>  source SVHD </Text>
           <TouchableOpacity
-            style={[styles.genderOption, formData.thyroidSurgery === 1 && styles.selectedGender]}
-            onPress={() => updateFormData('thyroidSurgery', 1)}
+            style={[styles.genderOption, formData.source_SVHD  === 1 && styles.selectedGender]}
+            onPress={() => updateFormData('source_SVHD', 1)}
           >
             <Text>1</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.genderOption, formData.thyroidSurgery === 0 && styles.selectedGender]}
-            onPress={() => updateFormData('thyroidSurgery', 0)}
-          >
-            <Text>0</Text>
-          </TouchableOpacity>
-        </View>
-        {/* I131 Treatment */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>I131 Treatment</Text>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.I131Treatmenty === 1 && styles.selectedGender]}
-            onPress={() => updateFormData('I131Treatmenty', 1)}
-          >
-            <Text>1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.I131Treatmenty === 0 && styles.selectedGender]}
-            onPress={() => updateFormData('I131Treatmenty', 0)}
-          >
-            <Text>0</Text>
-          </TouchableOpacity>
-        </View>
-        {/* Query Hypothyroid */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Query Hypothyroid</Text>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.queryHypothyroid === 1 && styles.selectedGender]}
-            onPress={() => updateFormData('queryHypothyroid', 1)}
-          >
-            <Text>1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.queryHypothyroid === 0 && styles.selectedGender]}
-            onPress={() => updateFormData('queryHypothyroid', 0)}
-          >
-            <Text>0</Text>
-          </TouchableOpacity>
-        </View>
-        {/* Query Hyperthyroid */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Query Hyperthyroid</Text>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.queryHyperthyroid === 1 && styles.selectedGender]}
-            onPress={() => updateFormData('queryHyperthyroid', 1)}
-          >
-            <Text>1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.queryHyperthyroid === 0 && styles.selectedGender]}
-            onPress={() => updateFormData('queryHyperthyroid', 0)}
+            style={[styles.genderOption, formData.source_SVHD  === 0 && styles.selectedGender]}
+            onPress={() => updateFormData('source_SVHD', 0)}
           >
             <Text>0</Text>
           </TouchableOpacity>
         </View>
 
+        {/* dtype */}
+
+        
+
         <TouchableOpacity style={styles.submitButton} onPress={onNextPressed}>
-          <Text style={styles.submitText}>Next</Text>
+          <Text style={styles.submitText}>Check the disease</Text>
         </TouchableOpacity>
-      </View>
+        {/* Display prediction and probability in text fields */}
+        <View style={styles.resultContainer}>
+  <Text style={styles.resultLabel}>Prediction:</Text>
+  <Text style={styles.resultText}>{predictionMessage}</Text>
+</View>
+<View style={styles.resultContainer}>
+  <Text style={styles.resultLabel}>Probability:</Text>
+  <Text style={styles.resultText}>{probability}</Text>
+</View>
+
+        </View>
     </ScrollView>
   );
 };
@@ -355,12 +494,27 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 20,
-    marginBottom:30
+    marginBottom: 30,
   },
   submitText: {
     color: '#fff',
     fontSize: 18,
   },
+  resultContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 20,
+  },
+  resultLabel: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  resultText: {
+    color: '#333',
+  },
+  
 });
 
 export default Thyroid;
