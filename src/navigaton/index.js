@@ -13,6 +13,7 @@ import HeartDisease from '../screens/HeartDisease';
 import Thyroid from '../Thyroid';
 import Thyroid2 from '../Thyroid2';
 import Thyroid3 from '../Thyroid3';
+import DischargeSummaryPage from '../screens/DischargeSummaryPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -83,6 +84,12 @@ const Navigation = () => {
          <Stack.Screen
           name="Thyroid3"
           component={Thyroid3}
+          options={{ headerShown: false }}
+        />
+
+<Stack.Screen
+          name="DischargeSummaryPage"
+          component={DischargeSummaryPage }
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

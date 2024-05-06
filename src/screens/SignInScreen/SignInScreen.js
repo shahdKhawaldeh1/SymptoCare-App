@@ -52,7 +52,7 @@ const SignInScreen = () => {
             minLength: { value: 6, message: 'Password should be minimum 6 characters' },
             pattern: {
               value: /^(?=.*\d)(?=.*\W).*$/,
-              message: 'Password must contain at least one number and one symbol',
+              message: 'invalid Password',
             },
           }}
         />

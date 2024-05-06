@@ -32,8 +32,8 @@ const HomeScreen = ({ navigation }) => {
     // Handle action for Thyroid button
   };
 
-  const onOther = () => {
-    setPressedButton('other');
+  const DischargeSummaryPage  = () => {
+     navigate('DischargeSummaryPage');
     // Handle action for Other button
   };
 
@@ -70,9 +70,9 @@ const HomeScreen = ({ navigation }) => {
 
       <View style={styles.buttonContainer}>
         <CustomerButton 
-          text="Other" 
-          onPress={onOther} 
-          bgColor={pressedButton === 'other' ? "#13566F" : "#198EB6"} 
+          text="Report " 
+          onPress={DischargeSummaryPage } 
+          bgColor={pressedButton === 'DischargeSummaryPage' ? "#13566F" : "#198EB6"} 
         />
       </View>
 
