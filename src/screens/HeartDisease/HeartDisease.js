@@ -5,6 +5,7 @@ const HeartDisease = () => {
 
   // Define state variables to store user-selected data
   const [formData, setFormData] = useState({
+    name:0,
     age: 0,
     restingBP: 0,
     cholestrol: 0,
@@ -38,6 +39,7 @@ const HeartDisease = () => {
 
       // Read the values from formData state
       const dataArray = [
+        formData.name,
         formData.age,
         formData.restingBP,
         formData.cholestrol,
@@ -228,6 +230,18 @@ const HeartDisease = () => {
           <Image source={heart_logo} style={styles.logo} />
         </View>
         {/* Input fields */}
+        
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>Name</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.age}
+            onChangeText={(text) => updateFormData('name', parseInt(text))}
+            keyboardType="numeric"
+            placeholder="Name"
+            placeholderTextColor="#999"
+          />
+        </View>
         {/* Age */}
         <View style={styles.inputRow}>
           <Text style={styles.label}>Age</Text>

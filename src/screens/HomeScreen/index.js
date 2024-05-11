@@ -22,8 +22,9 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const onKidneyDisease = () => {
-    setPressedButton('kidney');
-    // Handle action for Kidney Disease button
+   
+    navigate('Kideny');
+
   };
 
   const onThyroid = () => {

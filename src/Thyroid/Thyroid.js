@@ -8,6 +8,7 @@ const Thyroid = () => {
 
   // Define state variables to store user-selected data
   const [formData, setFormData] = useState({
+    name:0,
     age: 0,
     gender: 0, // 0: female / 1: male
     TSH: 0,
@@ -17,13 +18,16 @@ const Thyroid = () => {
    T4U: 0,
    Query_hypothyroid: 0,
    thyriod_sugery: 0,
-   referral: 0,
+   source_other:0,
    onThyroxine :0,
    Query_hyperthyroid:0,
    sick :0,
    FTI_measure:0,
    source_SVHD:0,
-
+    source_SVHC:0,
+    source_SVI:0,
+   
+  
 
   });
 
@@ -37,6 +41,7 @@ const Thyroid = () => {
 
       // Read the values from formData state
       const dataArray = [
+        formData.name,
         formData.age,
         formData.gender,
         formData.TSH,
@@ -46,12 +51,16 @@ const Thyroid = () => {
         formData.T4U,
         formData.Query_hypothyroid,
         formData.thyriod_sugery,
-        formData.referral,
+        formData.source_other,
         formData.onThyroxine,
         formData.Query_hyperthyroid,
         formData.sick,
         formData.FTI_measure,
         formData.source_SVHD,
+        formData.source_SVHC,
+        formData.source_SVI,
+        
+
       ];
     
       //console.log('Data Array2:', dataArray); // Log the data array
@@ -169,6 +178,43 @@ const Thyroid = () => {
     });
   };
 
+
+  const [selectedReferralSource, setSelectedReferralSource] = useState('SVHD');
+
+  const handleReferrelSource = (source) => {
+    setSelectedReferralSource(source); // Update the selected referral source
+  
+    let referralSourceValues = {
+      source_other: 0,
+      source_SVHD: 0,
+      source_SVHC: 0,
+      source_SVI: 0,
+    };
+  
+    switch (source) {
+      case 'SVHD':
+        referralSourceValues.source_SVHD = 1;
+        break;
+      case 'SVHC':
+        referralSourceValues.source_SVHC = 1;
+        break;
+      case 'SVI':
+        referralSourceValues.source_SVI = 1;
+        break;
+      case 'other':
+        referralSourceValues.source_other = 1;
+        break;
+      default:
+        break;
+    }
+  
+    setFormData((prevState) => ({
+      ...prevState,
+      ...referralSourceValues,
+    }));
+  };
+  
+  
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.container}>
@@ -176,6 +222,19 @@ const Thyroid = () => {
           <Image source={ThyroidLogo} style={styles.logo} />
         </View>
         {/* Input fields */}
+
+        
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>Name</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.age}
+            onChangeText={(text) => updateFormData('name', parseInt(text))}
+            keyboardType="numeric"
+            placeholder="Name"
+            placeholderTextColor="#999"
+          />
+        </View>
         {/* Age */}
         <View style={styles.inputRow}>
           <Text style={styles.label}>Age</Text>
@@ -291,7 +350,7 @@ const Thyroid = () => {
 
         {/*thyriod sugery*/}
         <View style={styles.inputRow}>
-          <Text style={styles.label}>thyriod sugery</Text>
+          <Text style={styles.label}>Thyriod sugery</Text>
           <TouchableOpacity
             style={[styles.genderOption, formData.thyriod_sugery=== 1 && styles.selectedGender]}
             onPress={() => updateFormData('thyriod_sugery', 1)}
@@ -306,21 +365,8 @@ const Thyroid = () => {
           </TouchableOpacity>
         </View>
         {/* referral*/}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>referral</Text>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.referral === 1 && styles.selectedGender]}
-            onPress={() => updateFormData('referral', 1)}
-          >
-            <Text>1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.referral=== 0 && styles.selectedGender]}
-            onPress={() => updateFormData('referral', 0)}
-          >
-            <Text>0</Text>
-          </TouchableOpacity>
-        </View>
+     
+
         {/* onThyroxine */}
         <View style={styles.inputRow}>
           <Text style={styles.label}>On Thyroxine </Text>
@@ -390,25 +436,50 @@ const Thyroid = () => {
           </TouchableOpacity>
         </View>
 {/* source_SVHD */}
+
 <View style={styles.inputRow}>
-          <Text style={styles.label}>  source SVHD </Text>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.source_SVHD  === 1 && styles.selectedGender]}
-            onPress={() => updateFormData('source_SVHD', 1)}
-          >
-            <Text>1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.genderOption, formData.source_SVHD  === 0 && styles.selectedGender]}
-            onPress={() => updateFormData('source_SVHD', 0)}
-          >
-            <Text>0</Text>
-          </TouchableOpacity>
-        </View>
+  <Text style={styles.label}>Referral</Text>
+  <ScrollView horizontal={true} contentContainerStyle={styles.referralOptionsContainer}>
+    <TouchableOpacity
+      style={[
+        styles.referralOption,
+        selectedReferralSource === 'SVHD' && styles.selectedReferralOption,
+      ]}
+      onPress={() => handleReferrelSource('SVHD')}
+    >
+      <Text>SVHD</Text>
+    </TouchableOpacity>
+    <TouchableOpacity
+      style={[
+        styles.referralOption,
+        selectedReferralSource === 'SVHC' && styles.selectedReferralOption,
+      ]}
+      onPress={() => handleReferrelSource('SVHC')}
+    >
+      <Text>SVHC</Text>
+    </TouchableOpacity>
+    <TouchableOpacity
+      style={[
+        styles.referralOption,
+        selectedReferralSource === 'SVI' && styles.selectedReferralOption,
+      ]}
+      onPress={() => handleReferrelSource('SVI')}
+    >
+      <Text>SVI</Text>
+    </TouchableOpacity>
+    <TouchableOpacity
+      style={[
+        styles.referralOption,
+        selectedReferralSource === 'other' && styles.selectedReferralOption,
+      ]}
+      onPress={() => handleReferrelSource('other')}
+    >
+      <Text>Other</Text>
+    </TouchableOpacity>
+  </ScrollView>
+</View>
 
-        {/* dtype */}
 
-        
 
         <TouchableOpacity style={styles.submitButton} onPress={onNextPressed}>
           <Text style={styles.submitText}>Check the disease</Text>
@@ -428,13 +499,13 @@ const Thyroid = () => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     backgroundColor: '#f5f5f5',
     paddingHorizontal: 20,
+   
   },
   logoContainer: {
     alignItems: 'center',
@@ -495,6 +566,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 30,
+
   },
   submitText: {
     color: '#fff',
@@ -506,6 +578,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 20,
+
   },
   resultLabel: {
     fontWeight: 'bold',
@@ -513,6 +586,25 @@ const styles = StyleSheet.create({
   },
   resultText: {
     color: '#333',
+  },
+  referralOptionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  referralOption: {
+    backgroundColor: '#eee',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 5,
+    marginHorizontal: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  
+  selectedReferralOption: {
+    backgroundColor: '#198EB6',
+    borderColor: '#4287f5',
+    color: '#fff',
   },
   
 });
