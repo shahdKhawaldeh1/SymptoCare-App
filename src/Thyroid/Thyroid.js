@@ -8,7 +8,7 @@ const Thyroid = () => {
 
   // Define state variables to store user-selected data
   const [formData, setFormData] = useState({
-    name:0,
+    name:"",
     age: 0,
     gender: 0, // 0: female / 1: male
     TSH: 0,
@@ -41,7 +41,6 @@ const Thyroid = () => {
 
       // Read the values from formData state
       const dataArray = [
-        formData.name,
         formData.age,
         formData.gender,
         formData.TSH,
@@ -59,8 +58,8 @@ const Thyroid = () => {
         formData.source_SVHD,
         formData.source_SVHC,
         formData.source_SVI,
-        
-
+        formData.name,
+      
       ];
     
       //console.log('Data Array2:', dataArray); // Log the data array
@@ -109,9 +108,9 @@ const Thyroid = () => {
 
 
     
-    console.log('Data Array2:', dataArray); // Log the data array
+    console.log('data:', dataArray); // Log the data array
 
-    const apiUrl = 'http://10.0.2.2:8000/predict/thyroid';
+    const apiUrl = 'http://10.0.2.2:8000/predict/thyroid/';
   
     fetch(apiUrl, {
       method: 'POST',
@@ -221,20 +220,17 @@ const Thyroid = () => {
         <View style={styles.logoContainer}>
           <Image source={ThyroidLogo} style={styles.logo} />
         </View>
-        {/* Input fields */}
-
-        
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Name</Text>
-          <TextInput
-            style={styles.input}
-            value={formData.age}
-            onChangeText={(text) => updateFormData('name', parseInt(text))}
-            keyboardType="numeric"
-            placeholder="Name"
-            placeholderTextColor="#999"
-          />
-        </View>
+            {/* Input fields */}
+      <View style={styles.inputRow}>
+        <Text style={styles.label}>Name</Text>
+        <TextInput
+          style={styles.input}
+          value={formData.name}
+          onChangeText={(text) => updateFormData('name', text)}
+          placeholder="Name"
+          placeholderTextColor="#999"
+        />
+      </View>
         {/* Age */}
         <View style={styles.inputRow}>
           <Text style={styles.label}>Age</Text>

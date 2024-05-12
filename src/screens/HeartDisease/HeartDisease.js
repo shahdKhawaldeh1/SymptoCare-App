@@ -5,7 +5,7 @@ const HeartDisease = () => {
 
   // Define state variables to store user-selected data
   const [formData, setFormData] = useState({
-    name:0,
+    name:"",
     age: 0,
     restingBP: 0,
     cholestrol: 0,
@@ -39,7 +39,6 @@ const HeartDisease = () => {
 
       // Read the values from formData state
       const dataArray = [
-        formData.name,
         formData.age,
         formData.restingBP,
         formData.cholestrol,
@@ -58,13 +57,13 @@ const HeartDisease = () => {
         formData.ST_Slope_Down,
         formData.ST_Slope_Flat,
         formData.ST_Slope_Up,
-        
+        formData.name,
       ];
     
   
-    console.log('Data Array2:', dataArray); // Log the data array
+    console.log('data:', dataArray); // Log the data array
 
-    const apiUrl = 'http://10.0.2.2:8000/predict/heart';
+    const apiUrl = 'http://10.0.2.2:8000/predict/heart/';
   
     fetch(apiUrl, {
       method: 'POST',
@@ -230,14 +229,12 @@ const HeartDisease = () => {
           <Image source={heart_logo} style={styles.logo} />
         </View>
         {/* Input fields */}
-        
         <View style={styles.inputRow}>
           <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
-            value={formData.age}
-            onChangeText={(text) => updateFormData('name', parseInt(text))}
-            keyboardType="numeric"
+            value={formData.name} 
+            onChangeText={(text) => updateFormData('name', text)} 
             placeholder="Name"
             placeholderTextColor="#999"
           />
