@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Animated, TextInput, Button } from 'react-native';
 import logo from '../../../assets/images/logo.png';
 
 const CustomCheckbox = ({ label, isChecked, onPress }) => {
@@ -104,6 +104,9 @@ const DischargeSummaryPage = () => {
     { id: '03', label: 'Providing treatment', isChecked: false },
   ]);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredPatients, setFilteredPatients] = useState([]);
+
   const handleCheckboxPress = (id) => {
     setChecklist((prevChecklist) =>
       prevChecklist.map((item) =>
@@ -113,11 +116,19 @@ const DischargeSummaryPage = () => {
   };
 
   // Sample patient data
-  const patient = {
-    name: 'Shahd khawaldeh',
-    age: 22,
-    gender: 'female',
-  };
+  // const patients = [
+  //   { name: 'John Doe', age: 30, gender: 'Male' },
+  //   { name: 'Jane Smith', age: 25, gender: 'Female' },
+  //   { name: 'Michael Johnson', age: 35, gender: 'Male' },
+  // ];
+
+  // Filtering patients based on search query
+  useEffect(() => {
+    // Fetch patient data from the database and filter it based on the search query
+    // Example:
+    // fetchPatientsFromDatabase(searchQuery).then((data) => setFilteredPatients(data));
+    // Replace fetchPatientsFromDatabase with your actual function to fetch data from the database
+  }, [searchQuery]);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -143,7 +154,16 @@ const DischargeSummaryPage = () => {
         {/* New Card */}
         <View style={styles.card}>
           <Text style={styles.heading}>Patient Information</Text>
-          <PatientInformation patient={patient} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search patient..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <Button title="Search" onPress={() => console.log('Search button pressed')} />
+          {filteredPatients.map((patient, index) => (
+            <PatientInformation key={index} patient={patient} />
+          ))}
         </View>
       </View>
     </ScrollView>
@@ -227,6 +247,20 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     marginBottom: 5,
+  },
+   searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
   },
 });
 

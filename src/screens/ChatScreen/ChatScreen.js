@@ -3,9 +3,7 @@ import { View, Text, StatusBar, TextInput, StyleSheet, TouchableOpacity, ScrollV
 
 const ChatScreen = () => {
   const [outputMessages, setOutputMessages] = useState([]);
-
   const [question, setQuestion] = useState('');
-
   const scrollViewRef = useRef();
 
   const handleButtonClick = () => {
@@ -21,18 +19,18 @@ const ChatScreen = () => {
       body: JSON.stringify({ question: question }),
     })
     .then((response) => response.json())
-  .then((data) => {
-    if (data && data.response) {
-      setOutputMessages([...outputMessages, { type: 'question', content: question }]);
-      setOutputMessages([...outputMessages, { type: 'response', content: data.response.trim() }]);
-      setQuestion('');
-    } else {
-      console.error("Unexpected response format:", data);
-    }
-  })
-  .catch((error) => {
-    console.error("Error:", error);
-  });
+    .then((data) => {
+      if (data && data.response) {
+        // Add both question and response to the output messages
+        setOutputMessages([...outputMessages, { type: 'message', question: question, response: data.response.trim() }]);
+        setQuestion('');
+      } else {
+        console.error("Unexpected response format:", data);
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
   };
 
   const handleTextInput = (text) => {
@@ -49,8 +47,13 @@ const ChatScreen = () => {
         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
       >
         {outputMessages.map((message, index) => (
-          <View key={index} style={message.type === 'question' ? styles.questionContainer : styles.responseContainer}>
-            <Text style={message.type === 'question' ? styles.questionText : styles.responseText}>{message.content}</Text>
+          <View key={index} style={styles.messageContainer}>
+            <View style={styles.questionContainer}>
+              <Text style={styles.questionText}>{message.question}</Text>
+            </View>
+            <View style={styles.responseContainer}>
+              <Text style={styles.responseText}>{message.response}</Text>
+            </View>
           </View>
         ))}
       </ScrollView>
@@ -71,7 +74,6 @@ const ChatScreen = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -83,26 +85,32 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 10,
   },
-  questionContainer: {
-    alignSelf: 'flex-start',
+  messageContainer: {
+    flexDirection: 'column', // Change to column
     marginBottom: 10,
+    // maxWidth: '80%',
+    alignSelf: 'flex-start',
+  },
+  questionContainer: {
+    // marginRight: 10,
+    alignSelf: 'flex-end', // Align question to the end
   },
   responseContainer: {
-    alignSelf: 'flex-end',
-    marginBottom: 10,
+    alignSelf: 'flex-start', // Align response to the start
   },
   questionText: {
     backgroundColor: '#EFEFEF',
     borderRadius: 10,
-    padding: 10,
-    maxWidth: '80%',
+    padding: 15,
+    marginBottom: 5, // Added margin bottom
   },
   responseText: {
-    backgroundColor: '#D0F5A9',
+    backgroundColor: '#ADD8E6', // Change background color to #198EB6
     borderRadius: 10,
     padding: 10,
-    maxWidth: '80%',
+    margin:10,
     textAlign: 'right',
+    marginBottom: 5, // Added margin bottom
   },
   inputContainer: {
     flexDirection: 'row',
@@ -117,14 +125,16 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginRight: 10,
+    marginLeft: 10,
   },
   sendButton: {
     backgroundColor: '#198EB6',
-    paddingVertical: 8,
+    paddingVertical: 12,
     paddingHorizontal: 15,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 10,
   },
 });
 

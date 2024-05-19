@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 30,
-    marginRight:40
+    marginRight:20
   },
   submitText: {
     color: '#fff',
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 20,
-    marginRight:40
+    marginRight:20
 
 
   },
