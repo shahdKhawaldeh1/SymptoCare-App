@@ -28,6 +28,8 @@ const PatientInformation = ({ patient }) => {
   );
 };
 
+
+
 const DotsLoader = () => {
   const pulseAnimation = useRef(new Animated.Value(0)).current;
 
@@ -83,6 +85,27 @@ const DotsLoader = () => {
       outputRange: [0, 10, 0],
     }),
   };
+  const apiUrl = 'http://10.0.2.2:8000/predict/heart/shahd';
+
+  fetch(apiUrl, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(responseData => {
+      // Print the response in the desired format
+      console.log(JSON.stringify(responseData, null, 4));
+    })
+    .catch(error => {
+      console.error('Error:', error.message);
+    });
 
   return (
     <View style={styles.loaderContainer}>
