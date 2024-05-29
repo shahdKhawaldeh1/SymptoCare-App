@@ -1,70 +1,66 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView,Image ,TouchableOpacity} from 'react-native';
-import heart_logo from  '../../../assets/images/heart_logo.png'
-const HeartDisease = () => {
+import { View, Text, StyleSheet, TextInput, ScrollView, Image, TouchableOpacity } from 'react-native';
+import heart_logo from '../../../assets/images/heart_logo.png';
 
+const HeartDisease = () => {
   // Define state variables to store user-selected data
   const [formData, setFormData] = useState({
-    name:"",
+    name: "",
+    phone: "", // New phone field
     age: 0,
     restingBP: 0,
     cholestrol: 0,
-    fasting:0,
+    fasting: 0,
     maxHR: 0,
     oldpeak: 0,
     gender: 0, // 0: female / 1: male
-    ChestPainType_ASY:0, 
-    ChestPainType_ATA:0,
-    ChestPainType_NAP:0,
-    ChestPainType_TA:0,
-    RestingECG_LVH:0,
-    RestingECG_Normal:0, 
-    RestingECG_ST:0,
-    ExerciseAngina:0,
-    ST_Slope_Down:0,
-    ST_Slope_Flat:0,
-    ST_Slope_Up:0,
-    
-
+    ChestPainType_ASY: 0,
+    ChestPainType_ATA: 0,
+    ChestPainType_NAP: 0,
+    ChestPainType_TA: 0,
+    RestingECG_LVH: 0,
+    RestingECG_Normal: 0,
+    RestingECG_ST: 0,
+    ExerciseAngina: 0,
+    ST_Slope_Down: 0,
+    ST_Slope_Flat: 0,
+    ST_Slope_Up: 0,
   });
 
+  // Define state variables to store prediction and probability
+  const [prediction, setPrediction] = useState('');
+  const [probability, setProbability] = useState('');
+  const [predictionMessage, setPredictionMessage] = useState('');
 
-   // Define state variables to store prediction and probability
-   const [prediction, setPrediction] = useState('');
-   const [probability, setProbability] = useState('');
+  const onNextPressed = () => {
+    // Read the values from formData state
+    const dataArray = [
+      formData.age,
+      formData.restingBP,
+      formData.cholestrol,
+      formData.fasting,
+      formData.maxHR,
+      formData.oldpeak,
+      formData.gender,
+      formData.ChestPainType_ASY,
+      formData.ChestPainType_ATA,
+      formData.ChestPainType_NAP,
+      formData.ChestPainType_TA,
+      formData.RestingECG_LVH,
+      formData.RestingECG_Normal,
+      formData.RestingECG_ST,
+      formData.ExerciseAngina,
+      formData.ST_Slope_Down,
+      formData.ST_Slope_Flat,
+      formData.ST_Slope_Up,
+      formData.name,
+      formData.phone, // Add phone number to data array
+    ];
 
-   const [predictionMessage, setPredictionMessage] = useState('');
-
-   const onNextPressed = () => {
-
-      // Read the values from formData state
-      const dataArray = [
-        formData.age,
-        formData.restingBP,
-        formData.cholestrol,
-        formData.fasting,
-        formData.maxHR,
-        formData.oldpeak,
-        formData.gender,
-        formData.ChestPainType_ASY, 
-        formData.ChestPainType_ATA,
-        formData.ChestPainType_NAP,
-        formData.ChestPainType_TA,
-        formData.RestingECG_LVH,
-        formData.RestingECG_Normal, 
-        formData.RestingECG_ST,
-        formData.ExerciseAngina,
-        formData.ST_Slope_Down,
-        formData.ST_Slope_Flat,
-        formData.ST_Slope_Up,
-        formData.name,
-      ];
-    
-  
     console.log('data:', dataArray); // Log the data array
 
     const apiUrl = 'http://10.0.2.2:8000/predict/heart/';
-  
+
     fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -99,11 +95,8 @@ const HeartDisease = () => {
       .catch(error => {
         console.error('Error:', error.message);
       });
-    
-};
+  };
 
-  
-  
   // Function to update form data based on input
   const updateFormData = (field, value) => {
     setFormData(prevState => ({
@@ -111,7 +104,6 @@ const HeartDisease = () => {
       [field]: value
     }));
   };
-  
 
   const handleGenderSelection = (gender) => {
     setFormData(prevState => {
@@ -126,15 +118,16 @@ const HeartDisease = () => {
           gender: 1,
         };
       }
-      return prevState; 
+      return prevState;
     });
   };
+
   const handleChestPainSelection = (pain) => {
     let chestPainValues = {
       ChestPainType_ASY: 0,
       ChestPainType_ATA: 0,
       ChestPainType_NAP: 0,
-      // ChestPainType_TA: 0,
+      ChestPainType_TA: 0,
     };
     switch (pain) {
       case 'ASY':
@@ -146,9 +139,9 @@ const HeartDisease = () => {
       case 'NAP':
         chestPainValues.ChestPainType_NAP = 1;
         break;
-      // case 'TA':
-      //   chestPainValues.ChestPainType_TA = 1;
-      //   break;
+      case 'TA':
+        chestPainValues.ChestPainType_TA = 1;
+        break;
       default:
         break;
     }
@@ -157,7 +150,7 @@ const HeartDisease = () => {
       ...chestPainValues,
     }));
   };
-  
+
   const handleRestingECGSelection = (ecg) => {
     let ecgValues = {
       RestingECG_LVH: 0,
@@ -182,7 +175,7 @@ const HeartDisease = () => {
       ...ecgValues,
     }));
   };
-  
+
   const handleStSlopeSelection = (slope) => {
     let slopeValues = {
       ST_Slope_Down: 0,
@@ -207,21 +200,21 @@ const HeartDisease = () => {
       ...slopeValues,
     }));
   };
-  
+
   const handleFastingSelection = (value) => {
     setFormData(prevState => ({
       ...prevState,
       fasting: value,
     }));
   };
-  
 
-  const handleExerciseAngina= (value) => {
+  const handleExerciseAngina = (value) => {
     setFormData(prevState => ({
       ...prevState,
       ExerciseAngina: value,
     }));
   };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.container}>
@@ -233,9 +226,21 @@ const HeartDisease = () => {
           <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
-            value={formData.name} 
-            onChangeText={(text) => updateFormData('name', text)} 
+            value={formData.name}
+            onChangeText={(text) => updateFormData('name', text)}
             placeholder="Name"
+            placeholderTextColor="#999"
+          />
+        </View>
+        {/* Phone */}
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>Phone</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.phone}
+            onChangeText={(text) => updateFormData('phone', text)}
+            keyboardType="phone-pad"
+            placeholder="Phone Number"
             placeholderTextColor="#999"
           />
         </View>
@@ -251,8 +256,8 @@ const HeartDisease = () => {
             placeholderTextColor="#999"
           />
         </View>
-       {/* Gender */}
-       <View style={styles.inputRow}>
+        {/* Gender */}
+        <View style={styles.inputRow}>
           <Text style={styles.label}>Gender</Text>
           <View style={styles.genderContainer}>
             <TouchableOpacity
@@ -270,39 +275,30 @@ const HeartDisease = () => {
           </View>
         </View>
 
-
-{/* chest pain */}
-<View style={styles.inputRow}>
-  <Text style={styles.label}>Chest Pain</Text>
-  <View style={styles.genderContainer}>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.ChestPainType_ASY === 1 && styles.selectedGender]}
-      onPress={() => handleChestPainSelection('ASY')}
-    >
-      <Text>ASY</Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.ChestPainType_ATA === 1 && styles.selectedGender]}
-      onPress={() => handleChestPainSelection('ATA')}
-    >
-      <Text>ATA</Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.ChestPainType_NAP === 1 && styles.selectedGender]}
-      onPress={() => handleChestPainSelection('NAP')}
-    >
-      <Text>NAP</Text>
-    </TouchableOpacity>
-    {/* <TouchableOpacity
-      style={[styles.genderOption, formData.ChestPainType_TA === 1 && styles.selectedGender]}
-      onPress={() => handleChestPainSelection('TA')}
-    >
-      <Text>TA</Text>
-    </TouchableOpacity> */}
-  </View>
-</View>
-
-
+        {/* Chest Pain */}
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>Chest Pain</Text>
+          <View style={styles.genderContainer}>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.ChestPainType_ASY === 1 && styles.selectedGender]}
+              onPress={() => handleChestPainSelection('ASY')}
+            >
+              <Text>ASY</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.ChestPainType_ATA === 1 && styles.selectedGender]}
+              onPress={() => handleChestPainSelection('ATA')}
+            >
+              <Text>ATA</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.ChestPainType_NAP === 1 && styles.selectedGender]}
+              onPress={() => handleChestPainSelection('NAP')}
+            >
+              <Text>NAP</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
         <View style={styles.inputRow}>
           <Text style={styles.label}>Resting BP</Text>
@@ -330,33 +326,30 @@ const HeartDisease = () => {
 
         {/* Resting ECG */}
         <View style={styles.inputRow}>
-  <Text style={styles.label}>Resting ECG</Text>
-  <View style={styles.genderContainer}>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.RestingECG_LVH === 1 && styles.selectedGender]}
-      onPress={() => handleRestingECGSelection('LVH')}
-    >
-      <Text>LVH</Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.RestingECG_Normal === 1 && styles.selectedGender]}
-      onPress={() => handleRestingECGSelection('NORMAL')}
-    >
-      <Text>NORMAL</Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.RestingECG_ST === 1 && styles.selectedGender]}
-      onPress={() => handleRestingECGSelection('ST')}
-    >
-      <Text>ST</Text>
-    </TouchableOpacity>
-  </View>
-</View>
+          <Text style={styles.label}>Resting ECG</Text>
+          <View style={styles.genderContainer}>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.RestingECG_LVH === 1 && styles.selectedGender]}
+              onPress={() => handleRestingECGSelection('LVH')}
+            >
+              <Text>LVH</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.RestingECG_Normal === 1 && styles.selectedGender]}
+              onPress={() => handleRestingECGSelection('NORMAL')}
+            >
+              <Text>NORMAL</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.RestingECG_ST === 1 && styles.selectedGender]}
+              onPress={() => handleRestingECGSelection('ST')}
+            >
+              <Text>ST</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-
-
-{/* max HR */}
-
+        {/* max HR */}
         <View style={styles.inputRow}>
           <Text style={styles.label}>maxHR</Text>
           <TextInput
@@ -381,88 +374,83 @@ const HeartDisease = () => {
             placeholderTextColor="#999"
           />
         </View>
-     
-     {/* ST slope */}
-     <View style={styles.inputRow}>
-  <Text style={styles.label}>ST Slope</Text>
-  <View style={styles.genderContainer}>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.ST_Slope_Down === 1 && styles.selectedGender]}
-      onPress={() => handleStSlopeSelection('DOWN')}
-    >
-      <Text>DOWN</Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.ST_Slope_Flat === 1 && styles.selectedGender]}
-      onPress={() => handleStSlopeSelection('FLAT')}
-    >
-      <Text>FLAT</Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.ST_Slope_Up === 1 && styles.selectedGender]}
-      onPress={() => handleStSlopeSelection('UP')}
-    >
-      <Text>UP</Text>
-    </TouchableOpacity>
-  </View>
-</View>
 
+        {/* ST slope */}
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>ST Slope</Text>
+          <View style={styles.genderContainer}>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.ST_Slope_Down === 1 && styles.selectedGender]}
+              onPress={() => handleStSlopeSelection('DOWN')}
+            >
+              <Text>DOWN</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.ST_Slope_Flat === 1 && styles.selectedGender]}
+              onPress={() => handleStSlopeSelection('FLAT')}
+            >
+              <Text>FLAT</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.ST_Slope_Up === 1 && styles.selectedGender]}
+              onPress={() => handleStSlopeSelection('UP')}
+            >
+              <Text>UP</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-{/* fasting */}
+        {/* Fasting */}
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>Fasting</Text>
+          <View style={styles.genderContainer}>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.fasting === 0 && styles.selectedGender]}
+              onPress={() => handleFastingSelection(0)}
+            >
+              <Text>0</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.fasting === 1 && styles.selectedGender]}
+              onPress={() => handleFastingSelection(1)}
+            >
+              <Text>1</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-
-<View style={styles.inputRow}>
-  <Text style={styles.label}>Fasting</Text>
-  <View style={styles.genderContainer}>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.fasting === 0 && styles.selectedGender]}
-      onPress={() => handleFastingSelection(0)}
-    >
-      <Text>0</Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.fasting === 1 && styles.selectedGender]}
-      onPress={() => handleFastingSelection(1)}
-    >
-      <Text>1</Text>
-    </TouchableOpacity>
-  </View>
-</View>
-
-            
-<View style={styles.inputRow}>
-  <Text style={styles.label}>Exercise Angina</Text>
-  <View style={styles.genderContainer}>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.ExerciseAngina=== 0 && styles.selectedGender]}
-      onPress={() =>  handleExerciseAngina(0)}
-    >
-      <Text>0</Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.genderOption, formData.ExerciseAngina === 1 && styles.selectedGender]}
-      onPress={() => handleExerciseAngina(1)}
-    >
-      <Text>1</Text>
-    </TouchableOpacity>
-  </View>
-</View>
-
+        {/* Exercise Angina */}
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>Exercise Angina</Text>
+          <View style={styles.genderContainer}>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.ExerciseAngina === 0 && styles.selectedGender]}
+              onPress={() => handleExerciseAngina(0)}
+            >
+              <Text>0</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderOption, formData.ExerciseAngina === 1 && styles.selectedGender]}
+              onPress={() => handleExerciseAngina(1)}
+            >
+              <Text>1</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={onNextPressed}>
           <Text style={styles.submitText}>Check the disease</Text>
         </TouchableOpacity>
         {/* Display prediction and probability in text fields */}
         <View style={styles.resultContainer}>
-  <Text style={styles.resultLabel}>Prediction:</Text>
-  <Text style={styles.resultText}>{predictionMessage}</Text>
-</View>
-<View style={styles.resultContainer}>
-  <Text style={styles.resultLabel}>Probability:</Text>
-  <Text style={styles.resultText}>{probability}</Text>
-</View>
-
+          <Text style={styles.resultLabel}>Prediction:</Text>
+          <Text style={styles.resultText}>{predictionMessage}</Text>
         </View>
+        <View style={styles.resultContainer}>
+          <Text style={styles.resultLabel}>Probability:</Text>
+          <Text style={styles.resultText}>{probability}</Text>
+        </View>
+      </View>
     </ScrollView>
   );
 };

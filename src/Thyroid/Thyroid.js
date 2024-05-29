@@ -9,6 +9,7 @@ const Thyroid = () => {
   // Define state variables to store user-selected data
   const [formData, setFormData] = useState({
     name:"",
+    phone:"",
     age: 0,
     gender: 0, // 0: female / 1: male
     TSH: 0,
@@ -59,6 +60,7 @@ const Thyroid = () => {
         formData.source_SVHC,
         formData.source_SVI,
         formData.name,
+        formData.phone,
       
       ];
     
@@ -231,6 +233,19 @@ const Thyroid = () => {
           placeholderTextColor="#999"
         />
       </View>
+
+         {/* Phone */}
+         <View style={styles.inputRow}>
+          <Text style={styles.label}>Phone</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.phone}
+            onChangeText={(text) => updateFormData('phone', text)}
+            keyboardType="phone-pad"
+            placeholder="Phone Number"
+            placeholderTextColor="#999"
+          />
+        </View>
         {/* Age */}
         <View style={styles.inputRow}>
           <Text style={styles.label}>Age</Text>
