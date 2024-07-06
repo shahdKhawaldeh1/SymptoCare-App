@@ -11,7 +11,7 @@ const ChatScreen = () => {
       return; // Skip if question is empty
     }
     
-    fetch("http://10.0.2.2:8000/msearch/answer/", {
+    fetch("http://176.119.254.220:8000/msearch/answer/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

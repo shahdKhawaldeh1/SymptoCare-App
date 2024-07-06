@@ -1,38 +1,61 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Alert } from 'react-native';
 import CustomerInput from '../../components/CustomerInput';
 import CustomerButton from '../../components/CustomerButton';
 import { useNavigation } from '@react-navigation/native';
-import {useForm} from 'react-hook-form'
+import { useForm } from 'react-hook-form';
+
 const SignUpScreen = () => {
-
-
-  const{control , handleSubmit} = useForm();
-
+  const { control, handleSubmit, getValues, reset } = useForm();
   const navigation = useNavigation();
 
-  const onRegisterPresses = () => {
-    navigation.navigate('Home');
-  };
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
 
-  const onSignInFacebook = () => {
-    console.warn('Facebook');
-  };
+  const handleSignUp = async (data) => {
+    const { name, email, password, cpassword } = data;
 
-  const onSignInGoogle = () => {
-    console.warn('Google');
-  };
+    // Check if password and confirm password match
+    if (password !== cpassword) {
+      Alert.alert('Signup Error', 'Passwords do not match');
+      return;
+    }
 
-  const onSigInPressed = () => {
-    navigation.navigate('SignIn');
-  };
+    // Prepare data array
+    const dataArray = [name, email, password];
 
-  const onTermsOfUsePressesd = () => {
-    console.warn('onTermsOfUsePressesd');
-  };
+    const apiUrl = 'http://176.119.254.220:8000/signup/';
 
-  const onPrivacyPressed = () => {
-    console.warn('onPrivacyPressed');
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: dataArray }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const responseData = await response.json();
+      Alert.alert('Signup Successful', 'You have successfully signed up!', [
+        {
+          text: 'OK',
+          onPress: () => {
+            reset(); // Reset form fields
+            navigation.navigate('Home'); // Navigate to home screen
+          },
+        },
+      ]);
+    } catch (error) {
+      console.error('Error:', error.message);
+      Alert.alert('Signup Error', 'An error occurred while signing up. Please try again later.');
+    }
   };
 
   return (
@@ -40,85 +63,80 @@ const SignUpScreen = () => {
       <View style={styles.container}>
         <Text style={styles.title}>Create an account</Text>
         <CustomerInput
-        name="username"
-        control={control}
-          placeholder="Username"
-          rules={{ required: 'Username is required' }}
-
-         
-         />
+          name="name"
+          control={control}
+          placeholder="Name"
+          rules={{ required: 'Name is required' }}
+        />
         <CustomerInput
-  placeholder="Email"
-  name="email"
-  control={control}
-  rules={{
-    required: 'Email is required',
-    pattern: {
-      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-      message: 'Invalid email address',
-    },
-  }}
-/>
-
-       <CustomerInput
-  placeholder="Password"
-  name="password"
-  control={control}
-  secureTextEntry={true}
-  rules={{
-    required: 'Password is required',
-    minLength: { value: 6, message: 'Password should be minimum 6 characters' },
-    pattern: {
-      value: /^(?=.*\d)(?=.*\W).*$/,
-      message: 'Password must contain at least one number and one symbol',
-    },
-  }}  
-/>
-
-<CustomerInput
-  placeholder="Confirm Password"
-  name="cpassword"
-  control={control}
-  secureTextEntry={true}
-  rules={{
-    required: 'Confirm Password is required',
-    validate: value => value === control.getValues('password') || 'Passwords do not match',
-  }}
-/>
-
-
-        <CustomerButton text="Register" onPress={handleSubmit (onRegisterPresses)} />
-
+          placeholder="Email"
+          name="email"
+          control={control}
+          rules={{
+            required: 'Email is required',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+              message: 'Invalid email address',
+            },
+          }}
+        />
+        <CustomerInput
+          placeholder="Password"
+          name="password"
+          control={control}
+          secureTextEntry={true}
+          rules={{
+            required: 'Password is required',
+            minLength: { value: 6, message: 'Password should be minimum 6 characters' },
+            pattern: {
+              value: /^(?=.*\d)(?=.*\W).*$/,
+              message: 'Password must contain at least one number and one symbol',
+            },
+          }}
+        />
+        <CustomerInput
+          placeholder="Confirm Password"
+          name="cpassword"
+          control={control}
+          secureTextEntry={true}
+          rules={{
+            required: 'Confirm Password is required',
+            validate: (value) =>
+              value === getValues('password') || 'Passwords do not match',
+          }}
+        />
+        <CustomerButton text="Register" onPress={handleSubmit(handleSignUp)} />
         <Text style={styles.text}>
           By registering, you confirm that you accept our{' '}
-          <Text style={styles.link} onPress={onTermsOfUsePressesd}>
+          <Text style={styles.link} onPress={() => console.warn('Terms of Use pressed')}>
             Terms of Use
-          </Text>
-          <Text style={styles.link} onPress={onPrivacyPressed}>
-            {' '}
-            and Privacy Policy
+          </Text>{' '}
+          and{' '}
+          <Text style={styles.link} onPress={() => console.warn('Privacy Policy pressed')}>
+            Privacy Policy
           </Text>
         </Text>
         <CustomerButton
           text="Sign in with Facebook"
-          onPress={onSignInFacebook}
+          onPress={() => console.warn('Sign in with Facebook')}
           bgColor="#85C2D7"
         />
         <CustomerButton
           text="Sign in with Google"
-          onPress={onSignInGoogle}
+          onPress={() => console.warn('Sign in with Google')}
           bgColor="#FAE9EA"
           fgColor="#DD4D44"
         />
         <CustomerButton
           text="Have an account? Sign in"
-          onPress={onSigInPressed}
+          onPress={() => navigation.navigate('SignIn')}
           type="TERTIARY"
         />
       </View>
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   scrollViewContent: {

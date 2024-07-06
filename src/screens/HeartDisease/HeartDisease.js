@@ -35,6 +35,8 @@ const HeartDisease = () => {
   const onNextPressed = () => {
     // Read the values from formData state
     const dataArray = [
+      formData.name,
+      formData.phone, // Add phone number to data array
       formData.age,
       formData.restingBP,
       formData.cholestrol,
@@ -53,13 +55,12 @@ const HeartDisease = () => {
       formData.ST_Slope_Down,
       formData.ST_Slope_Flat,
       formData.ST_Slope_Up,
-      formData.name,
-      formData.phone, // Add phone number to data array
+     
     ];
 
     console.log('data:', dataArray); // Log the data array
 
-    const apiUrl = 'http://10.0.2.2:8000/predict/heart/';
+    const apiUrl = 'http://176.119.254.220:8000/predict/heart/';
 
     fetch(apiUrl, {
       method: 'POST',

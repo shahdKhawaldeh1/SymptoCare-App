@@ -42,6 +42,8 @@ const Thyroid = () => {
 
       // Read the values from formData state
       const dataArray = [
+        formData.name,
+        formData.phone,
         formData.age,
         formData.gender,
         formData.TSH,
@@ -59,8 +61,7 @@ const Thyroid = () => {
         formData.source_SVHD,
         formData.source_SVHC,
         formData.source_SVI,
-        formData.name,
-        formData.phone,
+       
       
       ];
     
@@ -112,7 +113,7 @@ const Thyroid = () => {
     
     console.log('data:', dataArray); // Log the data array
 
-    const apiUrl = 'http://10.0.2.2:8000/predict/thyroid/';
+    const apiUrl = 'http://176.119.254.220:8000/predict/thyroid/';
   
     fetch(apiUrl, {
       method: 'POST',

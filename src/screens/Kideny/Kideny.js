@@ -42,6 +42,8 @@ const Kideny= () => {
 
       // Read the values from formData state
       const dataArray = [
+        formData.name,
+        formData.phone,
         formData.age,
         formData.Blood,
         formData.Gravity,
@@ -61,15 +63,14 @@ const Kideny= () => {
         formData.PusCellClumps,
         formData.Bacteria,
         formData.hypertension,
-        formData.name,
-        formData.phone,
+        
       ];
     
  
     
     console.log('data:', dataArray); // Log the data array
 
-    const apiUrl = 'http://10.0.2.2:8000/predict/kidney/';
+    const apiUrl = 'http://176.119.254.220:8000/predict/kidney/';
   
     fetch(apiUrl, {
       method: 'POST',
