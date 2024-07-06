@@ -8,7 +8,7 @@ const DischargeSummaryPage = () => {
   const [showSymptoms, setShowSymptoms] = useState(false);
 
   const handleSearch = () => {
-    const apiUrl = `http://176.119.254.220:8000/users/phone/${searchQuery}`;
+    const apiUrl = `http://10.0.2.2:8000/users/phone/${searchQuery}`;
     fetch(apiUrl, {
       method: 'GET',
       headers: {
@@ -33,13 +33,13 @@ const DischargeSummaryPage = () => {
     let apiUrl;
     switch (disease) {
       case 'heart':
-        apiUrl = `http://176.119.254.220:8000/predict/heart/${patient.id}`;
+        apiUrl = `http://10.0.2.2:8000/predict/heart/users/${patient.id}`;
         break;
       case 'kidney':
-        apiUrl = `http://176.119.254.220:8000/predict/kidney/${patient.id}`;
+        apiUrl = `http://10.0.2.2:8000/predict/kidney/users/${patient.id}`;
         break;
       case 'thyroid':
-        apiUrl = `http://176.119.254.220:8000/predict/thyroid/${patient.id}`;
+        apiUrl = `http://10.0.2.2:8000/predict/thyroid/users/${patient.id}`;
         break;
       default:
         return;

@@ -27,7 +27,7 @@ const SignUpScreen = () => {
     // Prepare data array
     const dataArray = [name, email, password];
 
-    const apiUrl = 'http://176.119.254.220:8000/signup/';
+    const apiUrl = 'http://10.0.2.2:8000/signup/';
 
     try {
       const response = await fetch(apiUrl, {

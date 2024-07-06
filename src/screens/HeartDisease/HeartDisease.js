@@ -7,6 +7,7 @@ const HeartDisease = () => {
   const [formData, setFormData] = useState({
     name: "",
     phone: "", // New phone field
+    email:"",
     age: 0,
     restingBP: 0,
     cholestrol: 0,
@@ -37,6 +38,7 @@ const HeartDisease = () => {
     const dataArray = [
       formData.name,
       formData.phone, // Add phone number to data array
+      formData.email,
       formData.age,
       formData.restingBP,
       formData.cholestrol,
@@ -60,7 +62,7 @@ const HeartDisease = () => {
 
     console.log('data:', dataArray); // Log the data array
 
-    const apiUrl = 'http://176.119.254.220:8000/predict/heart/';
+    const apiUrl = 'http://10.0.2.2:8000/predict/heart/';
 
     fetch(apiUrl, {
       method: 'POST',
@@ -230,6 +232,17 @@ const HeartDisease = () => {
             value={formData.name}
             onChangeText={(text) => updateFormData('name', text)}
             placeholder="Name"
+            placeholderTextColor="#999"
+          />
+        </View>
+         {/* email fields */}
+         <View style={styles.inputRow}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.email}
+            onChangeText={(text) => updateFormData('email', text)}
+            placeholder="Email"
             placeholderTextColor="#999"
           />
         </View>

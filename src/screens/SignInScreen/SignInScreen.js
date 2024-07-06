@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Image, StyleSheet, ScrollView, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, Image, StyleSheet, ScrollView, Text,Alert  } from 'react-native';
 import logo from '../../../assets/images/logo.png';
 import CustomerButton from '../../components/CustomerButton';
 import CustomerInput from '../../components/CustomerInput';
@@ -9,38 +9,61 @@ import { useForm } from 'react-hook-form';
 
 const SignInScreen = () => {
   const navigation = useNavigation();
-  const { control, handleSubmit, formState: { errors } } = useForm();
+  const { control, handleSubmit, reset } = useForm();
 
-  const onSignInPresses = (data) => {
-    navigation.navigate('Home');
+  const handleSignIn = async (data) => {
+    const { email, password } = data;
+
+    const apiUrl = 'http://10.0.2.2:8000/signin/';
+
+    const payload = { email, password };
+    console.log('Data sent to backend:', payload);  // Log the data being sent
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      console.log('Response Data:', responseData);  // Log the response data
+      Alert.alert('Sign In Successful', 'You have successfully signed in!', [
+        {
+          text: 'OK',
+          onPress: () => {
+            reset(); // Reset form fields
+            navigation.navigate('Home'); // Navigate to home screen
+          },
+        },
+      ]);
+    } catch (error) {
+      console.error('Error:', error.message);
+      Alert.alert('Sign In Error', `An error occurred while signing in. Please try again later. Error: ${error.message}`);
+    }
   };
-
-  const onForgetPasswordPresses = () => {
-    navigation.navigate('ForgetPassword');
-  };
-
-  const onSignInFacebook = () => {
-    console.warn('Facebook');
-  };
-
-  const onSignInGoogle = () => {
-    console.warn('Google');
-  };
-
-  const onSignUpPressed = () => {
-    navigation.navigate('SignUp');
-  };
-
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Image source={logo} style={styles.logo} />
-
+      <Image source={logo} style={styles.logo} />
+        <Text style={styles.title}>Sign In</Text>
         <CustomerInput
-          name="username"
-          placeholder="Username"
+          name="email"
+          placeholder="Email"
           control={control}
-          rules={{ required: 'Username is required' }}
+          rules={{
+            required: 'Email is required',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+              message: 'Invalid email address',
+            },
+          }}
         />
         <CustomerInput
           name="password"
@@ -50,28 +73,27 @@ const SignInScreen = () => {
           rules={{
             required: 'Password is required',
             minLength: { value: 6, message: 'Password should be minimum 6 characters' },
-            pattern: {
-              value: /^(?=.*\d)(?=.*\W).*$/,
-              message: 'invalid Password',
-            },
           }}
         />
 
-        <CustomerButton text="Sign In" onPress={handleSubmit(onSignInPresses)} />
+        <CustomerButton text="Sign In" onPress={handleSubmit(handleSignIn)} />
         <CustomerButton
           text="Forget Password?"
-          onPress={onForgetPasswordPresses}
+          onPress={() => navigation.navigate('ForgetPassword')}
           type="TERTIARY"
           style={{ marginTop: 10 }}
         />
 
-        <CustomerButton text="Sign in with Facebook" onPress={onSignInFacebook} bgColor="#85C2D7" />
-        <CustomerButton text="Sign in with Google" onPress={onSignInGoogle} bgColor="#FAE9EA" fgColor="#DD4D44" />
-        <CustomerButton text="Don't have an account? Create one" onPress={onSignUpPressed} type="TERTIARY" />
+        <CustomerButton
+          text="Don't have an account? Create one"
+          onPress={() => navigation.navigate('SignUp')}
+          type="TERTIARY"
+        />
       </View>
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
