@@ -5,9 +5,15 @@ import logo from '../../../assets/images/logo.png';
 const DischargeSummaryPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [patientData, setPatientData] = useState([]);
+  const [patientsymptoms, setsymptomsData] = useState([]);
   const [showSymptoms, setShowSymptoms] = useState(false);
 
+
   const handleSearch = () => {
+
+    setShowSymptoms(false);
+    setsymptomsData([]);
+
     const apiUrl = `http://10.0.2.2:8000/users/phone/${searchQuery}`;
     fetch(apiUrl, {
       method: 'GET',
@@ -23,12 +29,12 @@ const DischargeSummaryPage = () => {
       })
       .then(responseData => {
         setPatientData(responseData);
+      //  setShowSymptoms(true);
       })
       .catch(error => {
         console.error('Error:', error.message);
       });
   };
-
   const handleShowSymptoms = (disease, patient) => {
     let apiUrl;
     switch (disease) {
@@ -44,7 +50,7 @@ const DischargeSummaryPage = () => {
       default:
         return;
     }
-    
+  
     fetch(apiUrl, {
       method: 'GET',
       headers: {
@@ -58,15 +64,14 @@ const DischargeSummaryPage = () => {
         return response.json();
       })
       .then(symptomsData => {
-        // Assuming symptomsData is an array of symptoms
-        console.log(symptomsData);
-        // Do something with the symptomsData, like displaying them in a modal
+        setsymptomsData(symptomsData); // Update symptomsData state
+        setShowSymptoms(true); // Show symptoms section
       })
       .catch(error => {
         console.error('Error:', error.message);
       });
   };
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
@@ -101,9 +106,9 @@ const DischargeSummaryPage = () => {
                     Age: <Text style={styles.text}>{patient.age}</Text>
                   </Text>
                 )}
-                {patient.gender && (
+                {patient.gender !== undefined && (
                   <Text style={styles.label}>
-                    Gender: <Text style={styles.text}>{patient.gender}</Text>
+                    Gender: <Text style={styles.text}>{patient.gender === 1 ? 'Male' : 'Female'}</Text>
                   </Text>
                 )}
                 {patient.phone_number && (
@@ -117,68 +122,104 @@ const DischargeSummaryPage = () => {
                   </Text>
                 )}
                 {patient.kidneys && patient.kidneys.length > 0 && (
-                  <View>
-                    <Text style={styles.label}>
-                      Kidneys: 
-                      <Text style={styles.text}>
-                        {patient.kidneys.includes(1) ? <Text style={styles.diseaseText}>Have kidney disease</Text> : patient.kidneys.join(', ')}
+  <View>
+    <Text style={styles.label}>
+      Kidneys: 
+      <Text style={styles.text}>
+        {patient.kidneys.some(kidney => kidney > 0) ? <Text style={styles.diseaseText}>Have kidney disease</Text> : patient.kidneys.join(', ')}
+      </Text>
+    </Text>
+          {patient.kidneys.some(kidney => kidney > 0) && (
+            <View>
+              <TouchableOpacity style={styles.symptomsButton} onPress={() => handleShowSymptoms('kidney', patient)}>
+                <Text style={styles.symptomsButtonText}>Show Symptoms</Text>
+              </TouchableOpacity>
+              {showSymptoms && (
+                <View style={styles.resultBox}>
+                  <Text style={styles.title}>Symptoms of kidney disease</Text>
+                  {patientsymptoms.length > 0 && (
+                    <View style={styles.patientInfo}>
+                      {Object.keys(patientsymptoms[0]).map((key, index) => (
+                        <Text key={index} style={styles.label}>
+                          {key}: <Text style={styles.text}>{patientsymptoms[0][key]}</Text>
+                        </Text>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              )}
+            </View>
+          )}
+        </View>
+      )}
+               {patient.thyroids && patient.thyroids.length > 0 && (
+      <View>
+        <Text style={styles.label}>
+          Thyroids: 
+          <Text style={styles.text}>
+            {patient.thyroids.some(thyroid => thyroid > 0) ? <Text style={styles.diseaseText}>Have thyroid disease</Text> : patient.thyroids.join(', ')}
+          </Text>
+        </Text>
+        {patient.thyroids.some(thyroid => thyroid > 0) && (
+          <View>
+            <TouchableOpacity style={styles.symptomsButton} onPress={() => handleShowSymptoms('thyroid', patient)}>
+              <Text style={styles.symptomsButtonText}>Show Symptoms</Text>
+            </TouchableOpacity>
+            {showSymptoms && (
+              <View style={styles.resultBox}>
+                <Text style={styles.title}>Symptoms of thyroid disease</Text>
+                {patientsymptoms.length > 0 && (
+                  <View style={styles.patientInfo}>
+                    {Object.keys(patientsymptoms[0]).map((key, index) => (
+                      <Text key={index} style={styles.label}>
+                        {key}: <Text style={styles.text}>{patientsymptoms[0][key]}</Text>
                       </Text>
-                    </Text>
-                    {patient.kidneys.includes(1) && (
-                      <View>
-                        <TouchableOpacity style={styles.symptomsButton} onPress={handleShowSymptoms}>
-                          <Text style={styles.symptomsButtonText}>Show Symptoms</Text>
-                        </TouchableOpacity>
-                        {showSymptoms && (
-                          <Text style={styles.symptoms}>Symptoms of kidney disease...</Text>
-                        )}
-                      </View>
-                    )}
+                    ))}
                   </View>
                 )}
-                {patient.thyroids && patient.thyroids.length > 0 && (
-                  <View>
-                    <Text style={styles.label}>
-                      Thyroids: 
-                      <Text style={styles.text}>
-                        {patient.thyroids.includes(1) ? <Text style={styles.diseaseText}>Have thyroid disease</Text> : patient.thyroids.join(', ')}
-                      </Text>
-                    </Text>
-                    {patient.thyroids.includes(1) && (
-                      <View>
-                        <TouchableOpacity style={styles.symptomsButton} onPress={handleShowSymptoms}>
-                          <Text style={styles.symptomsButtonText}>Show Symptoms</Text>
-                        </TouchableOpacity>
-                        {showSymptoms && (
-                          <Text style={styles.symptoms}>Symptoms of thyroid disease...</Text>
-                        )}
-                      </View>
-                    )}
-                  </View>
-                )}
+              </View>
+            )}
+          </View>
+        )}
+      </View>
+    )}
                 {patient.hearts && patient.hearts.length > 0 && (
                   <View>
                     <Text style={styles.label}>
                       Hearts: 
                       <Text style={styles.text}>
-                        {patient.hearts.includes(1) ? <Text style={styles.diseaseText}> Have heart disease</Text> : patient.hearts.join(', ')}
+                        {patient.hearts.some(heart => heart > 0) ? <Text style={styles.diseaseText}> Have heart disease</Text> : patient.hearts.join(', ')}
                       </Text>
                     </Text>
                     
 
 
-                    {patient.hearts.includes(1) && (
-  <View>
-    <TouchableOpacity style={styles.symptomsButton} onPress={() => handleShowSymptoms('heart', patient)}>
-      <Text style={styles.symptomsButtonText}>Show Symptoms</Text>
-    </TouchableOpacity>
-    {showSymptoms && (
-      <Text style={styles.symptoms}>Symptoms of heart disease...</Text>
-    )}
-  </View>
-)}
-
-
+                    {patient.hearts.some(heart => heart > 0) && (
+          <View>
+            <TouchableOpacity style={styles.symptomsButton} onPress={() => handleShowSymptoms('heart', patient)}>
+              <Text style={styles.symptomsButtonText}>Show Symptoms</Text>
+            </TouchableOpacity>
+            {showSymptoms && (
+              <View style={styles.resultBox}>
+                <Text style={styles.title}>Symptoms of heart disease</Text>
+                {patientsymptoms.length > 0 && (
+                  <View style={styles.patientInfo}>
+                    {Object.keys(patientsymptoms[0]).map((key, index) => (
+                      <Text key={index} style={styles.label}>
+                        {key}: <Text style={styles.text}>{patientsymptoms[0][key]}</Text>
+                      </Text>
+                    ))}
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+        )}
+          {/* {(patient.kidneys && patient.kidneys.length <= 0) && (patient.hearts && patient.heart.length <= 0 )&& (patient.thyroids && patient.thyroid.length <= 0) && (
+                  <View style={styles.resultBox}>
+                    <Text style={styles.title}>No diseases found</Text>
+                  </View>
+              )} */}
                   </View>
                 )}
               </View>

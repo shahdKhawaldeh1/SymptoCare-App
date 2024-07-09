@@ -15,6 +15,7 @@ const SignUpScreen = () => {
     password: ''
   });
 
+
   const handleSignUp = async (data) => {
     const { name, email, password, cpassword } = data;
 
@@ -25,7 +26,9 @@ const SignUpScreen = () => {
     }
 
     // Prepare data array
-    const dataArray = [name, email, password];
+    const dataArray = [name,email,password];
+    console.log('Data to be sent:', dataArray);
+
 
     const apiUrl = 'http://10.0.2.2:8000/signup/';
 
@@ -54,7 +57,7 @@ const SignUpScreen = () => {
       ]);
     } catch (error) {
       console.error('Error:', error.message);
-      Alert.alert('Signup Error', 'An error occurred while signing up. Please try again later.');
+      Alert.alert('Signup Error', 'User Already Exist, OR Data field missing or incorrect format.');
     }
   };
 
@@ -136,8 +139,6 @@ const SignUpScreen = () => {
     </ScrollView>
   );
 };
-
-
 const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,

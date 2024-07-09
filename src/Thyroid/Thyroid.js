@@ -10,6 +10,7 @@ const Thyroid = () => {
   const [formData, setFormData] = useState({
     name:"",
     phone:"",
+    email:"",
     age: 0,
     gender: 0, // 0: female / 1: male
     TSH: 0,
@@ -44,6 +45,7 @@ const Thyroid = () => {
       const dataArray = [
         formData.name,
         formData.phone,
+        formData.email,
         formData.age,
         formData.gender,
         formData.TSH,
@@ -113,7 +115,7 @@ const Thyroid = () => {
     
     console.log('data:', dataArray); // Log the data array
 
-    const apiUrl = 'http://176.119.254.220:8000/predict/thyroid/';
+    const apiUrl = 'http://10.0.2.2:8000/predict/thyroid/';
   
     fetch(apiUrl, {
       method: 'POST',
@@ -247,6 +249,18 @@ const Thyroid = () => {
             placeholderTextColor="#999"
           />
         </View>
+
+         {/* email */}
+      <View style={styles.inputRow}>
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
+          value={formData.email}
+          onChangeText={(text) => updateFormData('email', text)}
+          placeholder="Email"
+          placeholderTextColor="#999"
+        />
+      </View>
         {/* Age */}
         <View style={styles.inputRow}>
           <Text style={styles.label}>Age</Text>

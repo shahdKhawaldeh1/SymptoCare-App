@@ -10,6 +10,8 @@ const Kideny= () => {
   const [formData, setFormData] = useState({
     name:"",
     phone:"",
+    email:"",
+    gender:0,
     age: 0,
     Blood: 0, // 0: female / 1: male
    Gravity: 0,
@@ -44,6 +46,8 @@ const Kideny= () => {
       const dataArray = [
         formData.name,
         formData.phone,
+        formData.email,
+        formData.gender,
         formData.age,
         formData.Blood,
         formData.Gravity,
@@ -70,7 +74,7 @@ const Kideny= () => {
     
     console.log('data:', dataArray); // Log the data array
 
-    const apiUrl = 'http://176.119.254.220:8000/predict/kidney/';
+    const apiUrl = 'http://10.0.2.2:8000/predict/kidney/';
   
     fetch(apiUrl, {
       method: 'POST',
@@ -157,6 +161,17 @@ const Kideny= () => {
           placeholderTextColor="#999"
         />
       </View>
+       {/* email fields */}
+       <View style={styles.inputRow}>
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
+          value={formData.email}
+          onChangeText={(text) => updateFormData('email', text)} 
+          placeholder="Email"
+          placeholderTextColor="#999"
+        />
+      </View>
          {/* Phone */}
          <View style={styles.inputRow}>
           <Text style={styles.label}>Phone</Text>
@@ -169,6 +184,23 @@ const Kideny= () => {
             placeholderTextColor="#999"
           />
         </View>
+
+        <View style={styles.inputRow}>
+          <Text style={styles.label}>Gender</Text>
+          <TouchableOpacity
+            style={[styles.genderOption, formData.gender === 1 && styles.selectedGender]}
+            onPress={() => updateFormData('gender', 1)}
+          >
+            <Text>Male</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.genderOption, formData.gender === 0 && styles.selectedGender]}
+            onPress={() => updateFormData('gender', 0)}
+          >
+            <Text>Female</Text>
+          </TouchableOpacity>
+        </View>
+
 
         {/* Age */}
         <View style={styles.inputRow}>
